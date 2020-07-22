@@ -1,0 +1,43 @@
+spring:
+ profiles:
+  active: local
+ topic:
+  purchased: SUBSCRIPTION_PURCHASED
+  canceled: SUBSCRIPTION_CANCELED
+  restarted: SUBSCRIPTION_RESTARTED
+---
+spring:
+ profiles: test
+ kafka:
+  template:
+   default-topic: SUBSCRIPTION_RESTARTED
+  consumer:
+   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+   value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+   group-id: subscription-events-group
+---
+spring:
+ profiles: local
+ kafka:
+  template:
+   default-topic: subscription-default
+  producer:
+   bootstrap-servers: "localhost:9096"
+   key-serializer: org.apache.kafka.common.serialization.StringSerializer
+   value-serializer: org.apache.kafka.common.serialization.StringSerializer
+   ssl:
+    key-store-location: "file:/var/private/ssl/server.keystore.jks"
+    key-store-password: 00santana00
+    trust-store-location: "file:/var/private/ssl/server.truststore.jks"
+    trust:store-password: 00santana00
+   properties:
+    acks: all
+    retries: 10
+    retry.backoff.ms: 1000
+    security:
+     protocol: SSL
+    ssl.endpoint.identification.algorithm:
+  admin:
+   properties:
+    bootstrap.servers: "localhost:9093,localhost:9094,localhost:9095"
+
